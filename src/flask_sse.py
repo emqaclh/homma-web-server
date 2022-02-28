@@ -8,17 +8,19 @@ import six
 
 from fakeredis import FakeStrictRedis
 
-__version__ = '1.0.0'
+__version__ = "1.0.0"
 
 """
 ORIGINAL CODE FROM @singingwolfboy: https://raw.githubusercontent.com/singingwolfboy/flask-sse/main/flask_sse.py
 """
+
 
 @six.python_2_unicode_compatible
 class Message(object):
     """
     Data that is published as a server-sent event.
     """
+
     def __init__(self, data, type=None, id=None, retry=None):
         """
         Create a server-sent event.
@@ -88,11 +90,11 @@ class Message(object):
 
     def __eq__(self, other):
         return (
-            isinstance(other, self.__class__) and
-            self.data == other.data and
-            self.type == other.type and
-            self.id == other.id and
-            self.retry == other.retry
+            isinstance(other, self.__class__)
+            and self.data == other.data
+            and self.type == other.type
+            and self.id == other.id
+            and self.retry == other.retry
         )
 
 
@@ -101,15 +103,16 @@ class ServerSentEventsBlueprint(Blueprint):
     A :class:`flask.Blueprint` subclass that knows how to publish, subscribe to,
     and stream server-sent events.
     """
+
     @property
     def redis(self):
         """
         A :class:`redis.StrictRedis` instance, configured to connect to the
         current application's Redis server.
         """
-        testing = current_app.config.get('TESTING')
+        testing = current_app.config.get("TESTING")
         if testing:
-          return FakeStrictRedis()
+            return FakeStrictRedis()
 
         redis_url = current_app.config.get("SSE_REDIS_URL")
         if not redis_url:
@@ -118,7 +121,7 @@ class ServerSentEventsBlueprint(Blueprint):
             raise KeyError("Must set a redis connection URL in app config.")
         return StrictRedis.from_url(redis_url)
 
-    def publish(self, data, type=None, id=None, retry=None, channel='sse'):
+    def publish(self, data, type=None, id=None, retry=None, channel="sse"):
         """
         Publish data as a server-sent event.
 
@@ -138,7 +141,7 @@ class ServerSentEventsBlueprint(Blueprint):
         msg_json = json.dumps(message.to_dict())
         return self.redis.publish(channel=channel, message=msg_json)
 
-    def messages(self, channel='sse'):
+    def messages(self, channel="sse"):
         """
         A generator of :class:`~flask_sse.Message` objects from the given channel.
         """
@@ -146,8 +149,8 @@ class ServerSentEventsBlueprint(Blueprint):
         pubsub.subscribe(channel)
         try:
             for pubsub_message in pubsub.listen():
-                if pubsub_message['type'] == 'message':
-                    msg_dict = json.loads(pubsub_message['data'])
+                if pubsub_message["type"] == "message":
+                    msg_dict = json.loads(pubsub_message["data"])
                     yield Message(**msg_dict)
         finally:
             try:
@@ -162,7 +165,7 @@ class ServerSentEventsBlueprint(Blueprint):
         Use a "channel" query parameter to stream events from a different
         channel than the default channel (which is "sse").
         """
-        channel = request.args.get('channel') or 'sse'
+        channel = request.args.get("channel") or "sse"
 
         @stream_with_context
         def generator():
@@ -171,11 +174,11 @@ class ServerSentEventsBlueprint(Blueprint):
 
         return current_app.response_class(
             generator(),
-            mimetype='text/event-stream',
+            mimetype="text/event-stream",
         )
 
 
-sse = ServerSentEventsBlueprint('sse', __name__)
+sse = ServerSentEventsBlueprint("sse", __name__)
 """
 An instance of :class:`~flask_sse.ServerSentEventsBlueprint`
 that hooks up the :meth:`~flask_sse.ServerSentEventsBlueprint.stream`
