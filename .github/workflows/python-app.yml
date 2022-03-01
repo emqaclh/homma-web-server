@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 
 env:
-  CONTENT_FOLDER: $HOME
+  CONTENT_FOLDER: /files
   SECRET_KEY: YhL+O<4O=o^ASdpd^1:Eb2rUCq6_a?okrpkks,imb~EfNG;d,)h>bZsj7/|bc(/
 
 jobs:
