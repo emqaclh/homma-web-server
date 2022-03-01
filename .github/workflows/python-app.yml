@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 
 env:
-  CONTENT_FOLDER: /_temp_files
+  CONTENT_FOLDER: /home/runner/work/_temp_files
   SECRET_KEY: YhL+O<4O=o^ASdpd^1:Eb2rUCq6_a?okrpkks,imb~EfNG;d,)h>bZsj7/|bc(/
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Create temp folder
       run: |
-        mkdir /_temp_files
+        mkdir /home/runner/work/_temp_files
     - name: Set up Python 3.8.10
       uses: actions/setup-python@v2
       with:
